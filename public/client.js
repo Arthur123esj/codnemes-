@@ -7,7 +7,7 @@ $("createBtn").onclick=()=>socket.emit("createRoom",{name:$("playerName").value}
 $("joinBtn").onclick=()=>socket.emit("joinRoom",{name:$("playerName").value,code:$("roomCode").value});
 $("assignBtn").onclick=()=>socket.emit("assign",{team:$("team").value,role:$("role").value});
 $("startBtn").onclick=()=>socket.emit("startGame");
-$("saveWordsBtn").onclick=()=>socket.emit("setCustomWords",{words:$("customWords").value.split(/\\r?\\n|,/)});
+$("saveWordsBtn").onclick=()=>socket.emit("setCustomWords",{words:$("customWords").value.split(/\r?\n|,/)});
 $("endTurnBtn").onclick=()=>socket.emit("endTurn");
 $("newRoundBtn").onclick=()=>socket.emit("newRound");
 $("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(location.origin+"?room="+state.code);notice("Link do convite copiado!");}catch{notice("Código da sala: "+state.code)}};
