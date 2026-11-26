@@ -23,7 +23,7 @@ function render(){
  for(const p of state.players){const el=document.createElement("div");el.className="player";el.textContent=p.name+" · "+(p.role==="spymaster"?"Mestre espião":p.role==="operative"?"Agente":"Escolhendo")+(p.connected?"":" · reconectando");(p.team==="red"?$("redPlayers"):p.team==="blue"?$("bluePlayers"):null)?.append(el);}
  $("startBtn").classList.toggle("hidden",!isHost);
  $("customWordsPanel").classList.toggle("hidden",!isHost);
- $("customWordsStatus").textContent=state.customWordsCount===25?"25 palavras personalizadas salvas.":"Usando palavras padrão (ou ainda não salvou uma lista).";
+ $("customWordsStatus").textContent=state.customWordsCount>0?`${state.customWordsCount} palavra(s) personalizada(s); o restante será aleatório.`:"Nenhuma palavra personalizada; todas serão aleatórias.";
  $("lobby").classList.toggle("hidden",state.phase!=="lobby");
  $("playing").classList.toggle("hidden",state.phase!=="playing");
  $("finished").classList.toggle("hidden",state.phase!=="finished");
