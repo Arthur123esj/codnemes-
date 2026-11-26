@@ -48,7 +48,15 @@ function publicRoom(room) {
     remainingGuesses: room.remainingGuesses
   };
 }
-function emitRoom(room) { io.to(room.code).emit("state", publicRoom(room)); }
+function emitRoom(room) {
+  io.to(room.code).emit("state", publicRoom(room));
+  // The answer key is sent privately to spymasters only.
+  for (const player of room.players.values()) {
+    if (player.connected && player.role === "spymaster" && room.board) {
+      io.to(player.id).emit("answerKey", room.board.map(card => card.color));
+    }
+  }
+}
 function error(socket, message) { socket.emit("notice", message); }
 
 function newBoard() {
