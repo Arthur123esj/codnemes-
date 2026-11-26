@@ -121,7 +121,7 @@ io.on("connection", socket => {
     const room=[...rooms.values()].find(r=>r.players.has(socket.id));
     if (!room || room.hostId!==socket.id || room.phase!=="lobby") return;
     if (!Array.isArray(words)) return error(socket,"Envie uma lista de palavras válida.");
-    const cleaned=words.map(w=>String(w||"").trim().replace(/\\s+/g," ").toUpperCase()).filter(Boolean);
+    const cleaned=words.map(w=>String(w||"").trim().replace(/\s+/g," ").toUpperCase()).filter(Boolean);
     const unique=[...new Set(cleaned)];
     if (unique.length!==25) return error(socket,`Você precisa informar exatamente 25 palavras diferentes. Foram encontradas ${unique.length}.`);
     if (unique.some(w=>w.length>24)) return error(socket,"Cada palavra deve ter no máximo 24 caracteres.");
