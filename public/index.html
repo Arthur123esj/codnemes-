@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>Codnemes | Jogue com seus amigos</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell">
+<header class="top"><a class="brand" href="#"><span class="brand-mark">C</span><span>CODNEMES<small>WORD PARTY ONLINE</small></span></a><span class="online"><i></i> SALAS AO VIVO</span></header>
+<main>
+<section id="welcome" class="welcome">
+<div class="eyebrow">UM JOGO DE PALAVRAS E ESTRATÉGIA</div><h1>Uma dica.<br><em>Várias possibilidades.</em></h1>
+<p>Reúna sua equipe, decifre as palavras e cuidado com o assassino. A próxima vitória começa com uma boa conexão.</p>
+<div class="entry-card">
+<label>SEU NOME<input id="playerName" maxlength="18" placeholder="Como seus amigos te chamam?"></label>
+<div class="entry-actions"><button id="createBtn" class="primary">Criar sala <b>↗</b></button><div class="join"><input id="roomCode" maxlength="6" placeholder="CÓDIGO"><button id="joinBtn" class="secondary">Entrar</button></div></div>
+</div>
+<div class="features"><span>✦ Salas privadas</span><span>✦ Até 20 jogadores</span><span>✦ Jogue no navegador</span></div>
+</section>
+<section id="game" class="hidden">
+<div class="room-head"><div><div class="eyebrow">SALA DE JOGO</div><h2>Código: <strong id="roomCodeLabel"></strong></h2></div><button id="copyBtn" class="secondary">Copiar convite</button></div>
+<div id="lobby" class="panel"><h3>Monte as equipes</h3><p class="muted">Escolha seu time e sua função. Cada equipe precisa de um mestre espião.</p><div class="teams"><div class="team red"><h4>Equipe vermelha</h4><div id="redPlayers"></div></div><div class="team blue"><h4>Equipe azul</h4><div id="bluePlayers"></div></div></div><div class="role-pick"><label>Minha equipe<select id="team"><option value="red">Vermelha</option><option value="blue">Azul</option></select></label><label>Minha função<select id="role"><option value="operative">Agente</option><option value="spymaster">Mestre espião</option></select></label><button id="assignBtn" class="primary">Confirmar equipe</button></div><button id="startBtn" class="start">Iniciar partida</button></div>
+<div id="playing" class="hidden">
+<div class="status panel"><div><span class="eyebrow">VEZ DA EQUIPE</span><h3 id="turnLabel"></h3></div><div class="score"><span>🔴 <b id="redCount">9</b></span><span>🔵 <b id="blueCount">8</b></span></div></div>
+<div class="play-layout"><div class="board-wrap"><div id="board" class="board"></div></div><aside class="side panel"><div id="clueBox"></div><div id="spymasterBox"></div><button id="endTurnBtn" class="secondary hidden">Encerrar turno</button></aside></div>
+</div>
+<div id="finished" class="panel hidden"><div class="eyebrow">FIM DE JOGO</div><h2 id="winnerLabel"></h2><button id="newRoundBtn" class="primary">Jogar novamente</button></div>
+</section>
+</main><div id="notice" class="notice hidden"></div><footer>CODNEMES ONLINE <span>FEITO PARA JOGAR JUNTO</span></footer>
+</div>
+<script src="/socket.io/socket.io.js"></script><script src="/client.js"></script>
+</body></html>
