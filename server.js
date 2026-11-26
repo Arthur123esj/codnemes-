@@ -61,7 +61,9 @@ function emitRoom(room) {
 function error(socket, message) { socket.emit("notice", message); }
 
 function newBoard(customWords = []) {
-  const chosen = [...new Set(customWords)].slice(0,25);\n  const remaining = shuffle(WORDS.filter(word => !chosen.includes(word))).slice(0, 25 - chosen.length);\n  const words = shuffle([...chosen, ...remaining]);
+  const chosen = [...new Set(customWords)].slice(0,25);
+  const remaining = shuffle(WORDS.filter(word => !chosen.includes(word))).slice(0, 25 - chosen.length);
+  const words = shuffle([...chosen, ...remaining]);
   const start = Math.random() < 0.5 ? "red" : "blue";
   const colors = shuffle([
     ...Array(9).fill("red"), ...Array(8).fill("blue"),
@@ -123,7 +125,7 @@ io.on("connection", socket => {
     if (!Array.isArray(words)) return error(socket,"Envie uma lista de palavras válida.");
     const cleaned=words.map(w=>String(w||"").trim().replace(/\s+/g," ").toUpperCase()).filter(Boolean);
     const unique=[...new Set(cleaned)];
-    if (unique.length!==25) return error(socket,`Você precisa informar exatamente 25 palavras diferentes. Foram encontradas ${unique.length}.`);
+    if (unique.length>25) return error(socket,`Você informou ${unique.length} palavras. O máximo é 25.`);
     if (unique.some(w=>w.length>24)) return error(socket,"Cada palavra deve ter no máximo 24 caracteres.");
     room.customWords=unique;
     emitRoom(room);
