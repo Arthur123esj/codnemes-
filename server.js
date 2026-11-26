@@ -127,7 +127,7 @@ io.on("connection", socket => {
     if (unique.some(w=>w.length>24)) return error(socket,"Cada palavra deve ter no máximo 24 caracteres.");
     room.customWords=unique;
     emitRoom(room);
-    socket.emit("notice","As 25 palavras personalizadas foram salvas!");
+    socket.emit("notice",unique.length?`${unique.length} palavra(s) salva(s). O restante será aleatório.`:"Lista limpa. Todas as palavras serão aleatórias.");
   });
 
   socket.on("startGame", () => {
