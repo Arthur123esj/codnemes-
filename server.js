@@ -45,7 +45,8 @@ function publicRoom(room) {
     })),
     turn: room.turn, counts: room.counts, clue: room.clue,
     winner: room.winner, hostId: room.hostId,
-    remainingGuesses: room.remainingGuesses
+    remainingGuesses: room.remainingGuesses,
+    customWordsCount: room.customWords?.length || 0
   };
 }
 function emitRoom(room) {
@@ -59,8 +60,8 @@ function emitRoom(room) {
 }
 function error(socket, message) { socket.emit("notice", message); }
 
-function newBoard() {
-  const words = shuffle(WORDS).slice(0,25);
+function newBoard(customWords = []) {
+  const words = customWords.length === 25 ? shuffle(customWords) : shuffle(WORDS).slice(0,25);
   const start = Math.random() < 0.5 ? "red" : "blue";
   const colors = shuffle([
     ...Array(9).fill("red"), ...Array(8).fill("blue"),
@@ -75,7 +76,7 @@ function newBoard() {
   return { cards: words.map((word,i)=>({word,color:colors[i],revealed:false})), start };
 }
 function startGame(room) {
-  const board = newBoard();
+  const board = newBoard(room.customWords || []);
   room.board = board.cards;
   room.turn = board.start;
   room.phase = "playing";
@@ -93,7 +94,7 @@ io.on("connection", socket => {
     if (!name?.trim()) return error(socket,"Digite seu nome.");
     let roomCode; do { roomCode=code(); } while(rooms.has(roomCode));
     const player={id:socket.id,name:name.trim().slice(0,18),team:null,role:"player",connected:true};
-    const room={code:roomCode,hostId:socket.id,players:new Map([[socket.id,player]]),phase:"lobby",board:null,turn:null,counts:{red:0,blue:0},clue:null,winner:null,remainingGuesses:0};
+    const room={code:roomCode,hostId:socket.id,players:new Map([[socket.id,player]]),phase:"lobby",board:null,turn:null,counts:{red:0,blue:0},clue:null,winner:null,remainingGuesses:0,customWords:[]};
     rooms.set(roomCode,room); socket.join(roomCode);
     socket.emit("joined",publicRoom(room)); emitRoom(room);
   });
@@ -116,11 +117,25 @@ io.on("connection", socket => {
     const p=room.players.get(socket.id); p.team=team; p.role=role; emitRoom(room);
   });
 
+  socket.on("setCustomWords", ({words}) => {
+    const room=[...rooms.values()].find(r=>r.players.has(socket.id));
+    if (!room || room.hostId!==socket.id || room.phase!=="lobby") return;
+    if (!Array.isArray(words)) return error(socket,"Envie uma lista de palavras válida.");
+    const cleaned=words.map(w=>String(w||"").trim().replace(/\\s+/g," ").toUpperCase()).filter(Boolean);
+    const unique=[...new Set(cleaned)];
+    if (unique.length!==25) return error(socket,`Você precisa informar exatamente 25 palavras diferentes. Foram encontradas ${unique.length}.`);
+    if (unique.some(w=>w.length>24)) return error(socket,"Cada palavra deve ter no máximo 24 caracteres.");
+    room.customWords=unique;
+    emitRoom(room);
+    socket.emit("notice","As 25 palavras personalizadas foram salvas!");
+  });
+
   socket.on("startGame", () => {
     const room=[...rooms.values()].find(r=>r.players.has(socket.id));
     if (!room || room.hostId!==socket.id) return;
     const teams=COLORS.every(team=>[...room.players.values()].some(p=>p.team===team));
     if (!teams) return error(socket,"Coloque pelo menos um jogador em cada equipe.");
+    if (room.customWords && room.customWords.length!==25) return error(socket,"A lista personalizada precisa ter 25 palavras.");
     if (!COLORS.every(team=>[...room.players.values()].some(p=>p.team===team&&p.role==="spymaster"))) return error(socket,"Cada equipe precisa de um mestre espião.");
     startGame(room); emitRoom(room);
   });
