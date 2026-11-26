@@ -61,7 +61,7 @@ function emitRoom(room) {
 function error(socket, message) { socket.emit("notice", message); }
 
 function newBoard(customWords = []) {
-  const words = customWords.length === 25 ? shuffle(customWords) : shuffle(WORDS).slice(0,25);
+  const chosen = [...new Set(customWords)].slice(0,25);\n  const remaining = shuffle(WORDS.filter(word => !chosen.includes(word))).slice(0, 25 - chosen.length);\n  const words = shuffle([...chosen, ...remaining]);
   const start = Math.random() < 0.5 ? "red" : "blue";
   const colors = shuffle([
     ...Array(9).fill("red"), ...Array(8).fill("blue"),
@@ -135,7 +135,7 @@ io.on("connection", socket => {
     if (!room || room.hostId!==socket.id) return;
     const teams=COLORS.every(team=>[...room.players.values()].some(p=>p.team===team));
     if (!teams) return error(socket,"Coloque pelo menos um jogador em cada equipe.");
-    if (room.customWords && room.customWords.length!==25) return error(socket,"A lista personalizada precisa ter 25 palavras.");
+    
     if (!COLORS.every(team=>[...room.players.values()].some(p=>p.team===team&&p.role==="spymaster"))) return error(socket,"Cada equipe precisa de um mestre espião.");
     startGame(room); emitRoom(room);
   });
