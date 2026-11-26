@@ -28,6 +28,15 @@ function render(){
  $("playing").classList.toggle("hidden",state.phase!=="playing");
  $("finished").classList.toggle("hidden",state.phase!=="finished");
  if(state.phase==="playing"){
+  const redAgents=state.players.filter(p=>p.team==="red"&&p.role==="operative");
+  const blueAgents=state.players.filter(p=>p.team==="blue"&&p.role==="operative");
+  const redMaster=state.players.find(p=>p.team==="red"&&p.role==="spymaster");
+  const blueMaster=state.players.find(p=>p.team==="blue"&&p.role==="spymaster");
+  const renderAgents=players=>players.length?players.map(p=>'<span class="roster-chip">'+escapeHtml(p.name)+'</span>').join(""):'<span class="roster-empty">Nenhum agente ainda</span>';
+  $("redOperatives").innerHTML=renderAgents(redAgents);
+  $("blueOperatives").innerHTML=renderAgents(blueAgents);
+  $("redSpymaster").textContent=redMaster?redMaster.name:"Aguardando mestre espião";
+  $("blueSpymaster").textContent=blueMaster?blueMaster.name:"Aguardando mestre espião";
   $("turnLabel").textContent=state.turn==="red"?"🔴 VERMELHA":"🔵 AZUL";
   $("redCount").textContent=state.counts.red;$("blueCount").textContent=state.counts.blue;
   const board=$("board");board.innerHTML="";
